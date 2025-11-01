@@ -1,0 +1,25 @@
+# Outils FPGA (installés localement)
+/tools/
+
+# Fichiers de simulation
+*.out
+*.vcd
+*.vvp
+sim.out
+simulation.out
+
+# Fichiers de synthèse
+*.json
+*.asc
+*.bin
+*.rpt
+
+# Fichiers temporaires
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Fichiers de build dans chaque exercice
+*/build/
+*/.build/
