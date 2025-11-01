@@ -113,7 +113,7 @@ Cette progression de **25 exercices** couvre tous les aspects de la Go Board, du
 - [x] **000_switch_to_led** - Connexion directe switches → LEDs
 - [x] **001_logic_gates** - Portes logiques (AND, OR, XOR, NOT)
 - [x] **002_multiplexer** - Multiplexeur 4→1
-- [ ] **003_decoder** - Décodeur binaire 2→4
+- [x] **003_decoder** - Décodeur binaire 2→4
 - [ ] **004_binary_to_7seg** - Affichage hexadécimal sur 7 segments
 
 ### 🟡 Niveau 2 : Logique séquentielle et horloge
@@ -149,7 +149,7 @@ Cette progression de **25 exercices** couvre tous les aspects de la Go Board, du
 - [ ] **024_memory_game** - Jeu de mémoire (Simon)
 - [ ] **025_simple_cpu** - Processeur simple 8 bits avec ALU
 
-### Progression : 3/25 exercices terminés (12%)
+### Progression : 4/25 exercices terminés (16%)
 
 ### Concepts couverts
 
