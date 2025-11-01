@@ -1,5 +1,7 @@
 # Nandland Go Board - Exercices CLI
 
+[![Test Exercises](https://github.com/kdridi/nandland/actions/workflows/test-exercises.yml/badge.svg)](https://github.com/kdridi/nandland/actions/workflows/test-exercises.yml)
+
 Exercices d'apprentissage FPGA pour la Go Board de Nandland, utilisant uniquement des outils en ligne de commande.
 
 ## Installation des outils (macOS ARM64)

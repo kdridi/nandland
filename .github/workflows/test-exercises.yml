@@ -1,0 +1,99 @@
+name: Test Exercises
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Cache OSS CAD Suite
+      id: cache-oss-cad-suite
+      uses: actions/cache@v4
+      with:
+        path: tools/oss-cad-suite
+        key: oss-cad-suite-linux-x64-${{ hashFiles('.github/workflows/test-exercises.yml') }}
+        restore-keys: |
+          oss-cad-suite-linux-x64-
+
+    - name: Install OSS CAD Suite
+      if: steps.cache-oss-cad-suite.outputs.cache-hit != 'true'
+      run: |
+        mkdir -p tools
+        cd tools
+        # Télécharger la dernière version pour Linux x64
+        wget -q https://github.com/YosysHQ/oss-cad-suite-build/releases/download/2025-11-01/oss-cad-suite-linux-x64-20251101.tgz
+        tar -xzf oss-cad-suite-linux-x64-20251101.tgz
+        rm oss-cad-suite-linux-x64-20251101.tgz
+
+    - name: Find and test all exercises
+      run: |
+        # Couleurs pour l'affichage
+        GREEN='\033[0;32m'
+        RED='\033[0;31m'
+        BLUE='\033[0;34m'
+        NC='\033[0m'
+
+        echo -e "${BLUE}=== Testing all exercises ===${NC}"
+        echo ""
+
+        TOTAL=0
+        PASSED=0
+        FAILED=0
+
+        # Trouver tous les répertoires d'exercices (format: XXX_nom)
+        for exercise_dir in [0-9][0-9][0-9]_*/; do
+          if [ -d "$exercise_dir" ] && [ -f "${exercise_dir}Makefile" ]; then
+            exercise_name=$(basename "$exercise_dir")
+            TOTAL=$((TOTAL + 1))
+
+            echo -e "${BLUE}Testing: ${exercise_name}${NC}"
+
+            # Test 1: Simulation
+            if make -C "$exercise_dir" sim > /dev/null 2>&1; then
+              echo -e "  ${GREEN}✓ Simulation passed${NC}"
+
+              # Test 2: Build (synthèse uniquement, pas de flash)
+              if make -C "$exercise_dir" build > /dev/null 2>&1; then
+                echo -e "  ${GREEN}✓ Build passed${NC}"
+                PASSED=$((PASSED + 1))
+              else
+                echo -e "  ${RED}✗ Build failed${NC}"
+                FAILED=$((FAILED + 1))
+              fi
+            else
+              echo -e "  ${RED}✗ Simulation failed${NC}"
+              FAILED=$((FAILED + 1))
+            fi
+
+            # Nettoyage
+            make -C "$exercise_dir" clean > /dev/null 2>&1
+            echo ""
+          fi
+        done
+
+        # Résumé
+        echo -e "${BLUE}=== Summary ===${NC}"
+        echo "Total exercises: $TOTAL"
+        echo -e "${GREEN}Passed: $PASSED${NC}"
+        echo -e "${RED}Failed: $FAILED${NC}"
+
+        # Exit code basé sur les résultats
+        if [ $FAILED -gt 0 ]; then
+          exit 1
+        fi
+
+    - name: Upload build artifacts
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: bitstreams
+        path: '*/build/*.bin'
+        if-no-files-found: ignore
